@@ -1,11 +1,14 @@
+import { useForm } from '@tanstack/react-form'
 import { AudioLines, Eye, EyeOff, Lock, User, X } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '~/shared/ui/button'
 import { Card, CardContent, CardHeader } from '~/shared/ui/card'
+import { Checkbox } from '~/shared/ui/checkbox'
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
@@ -17,17 +20,36 @@ import {
 } from '~/shared/ui/input-group'
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false)
+
+  const form = useForm({
+    defaultValues: {
+      username: '',
+      password: '',
+      rememberMe: false,
+    },
+    onSubmit: async () => {
+      // Intentionally left blank until API integration is added.
+    },
+  })
+
   return (
     <Card>
       <CardHeader>
         <Link to="#" className="flex items-center justify-center">
-          <div className="flex size-13 items-center justify-center rounded-full bg-accent text-foreground">
+          <div className="flex size-13 items-center justify-center rounded-full text-foreground">
             <AudioLines className="size-8" />
           </div>
         </Link>
       </CardHeader>
       <CardContent>
-        <form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            void form.handleSubmit()
+          }}
+        >
           <FieldGroup>
             <div className="flex flex-col items-center gap-1 text-center">
               <h1 className="text-2xl font-bold">Добро пожаловать!</h1>
@@ -35,10 +57,165 @@ export function LoginForm() {
                 Пожалуйста, авторизуйтесь
               </p>
             </div>
-            <UsernameInput />
-            <PasswordInput />
+
+            <form.Field
+              name="username"
+              validators={{
+                onChange: ({ value }) =>
+                  value.trim().length > 0 ? undefined : 'Введите логин',
+              }}
+            >
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Логин</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Введите логин"
+                        autoComplete="username"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
+
+                      <InputGroupAddon>
+                        <User />
+                      </InputGroupAddon>
+
+                      {field.state.value && (
+                        <InputGroupAddon align={'inline-end'}>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-sm"
+                            aria-label="Clear username"
+                            onClick={() => {
+                              field.handleChange('')
+                              form.setFieldValue('password', '')
+                            }}
+                            className={'hover:bg-transparent'}
+                          >
+                            <X />
+                          </Button>
+                        </InputGroupAddon>
+                      )}
+                    </InputGroup>
+
+                    {isInvalid && (
+                      <FieldError
+                        errors={field.state.meta.errors.map((error) => ({
+                          message: error?.toString(),
+                        }))}
+                      />
+                    )}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            <form.Field
+              name="password"
+              validators={{
+                onChange: ({ value }) => {
+                  if (!value.trim()) {
+                    return 'Введите пароль'
+                  }
+
+                  return undefined
+                },
+              }}
+            >
+              {(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <div className="flex items-center">
+                      <FieldLabel htmlFor={field.name}>Пароль</FieldLabel>
+                      <Link
+                        to="#"
+                        className="ml-auto text-sm text-foreground underline-offset-4 hover:underline"
+                      >
+                        Забыли пароль?
+                      </Link>
+                    </div>
+
+                    <InputGroup>
+                      <InputGroupInput
+                        id={field.name}
+                        name={field.name}
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Введите пароль"
+                        autoComplete="current-password"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                      />
+
+                      <InputGroupAddon>
+                        <Lock />
+                      </InputGroupAddon>
+
+                      <InputGroupAddon align={'inline-end'}>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          aria-label={
+                            showPassword ? 'Hide password' : 'Show password'
+                          }
+                          className={'hover:bg-transparent'}
+                        >
+                          {showPassword ? <EyeOff /> : <Eye />}
+                        </Button>
+                      </InputGroupAddon>
+                    </InputGroup>
+
+                    {isInvalid ? (
+                      <FieldError
+                        errors={field.state.meta.errors.map((error) => ({
+                          message: error?.toString(),
+                        }))}
+                      />
+                    ) : null}
+                  </Field>
+                )
+              }}
+            </form.Field>
+
+            <form.Field name="rememberMe">
+              {(field) => (
+                <Field orientation="horizontal">
+                  <Checkbox
+                    id={field.name}
+                    name={field.name}
+                    checked={field.state.value}
+                    onCheckedChange={(checked) => field.handleChange(checked)}
+                  />
+                  <FieldLabel htmlFor={field.name}>Запомнить данные</FieldLabel>
+                </Field>
+              )}
+            </form.Field>
+
             <Field>
-              <Button type="submit">Войти</Button>
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+              >
+                {([canSubmit, isSubmitting]) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                    {isSubmitting ? 'Входим...' : 'Войти'}
+                  </Button>
+                )}
+              </form.Subscribe>
             </Field>
             <FieldSeparator>Или продолжить с</FieldSeparator>
             <Field>
@@ -62,83 +239,5 @@ export function LoginForm() {
         </form>
       </CardContent>
     </Card>
-  )
-}
-
-function UsernameInput() {
-  const [username, setUsername] = useState('')
-
-  return (
-    <Field>
-      <FieldLabel htmlFor="username">Логин</FieldLabel>
-      <InputGroup>
-        <InputGroupInput
-          id="username"
-          placeholder="Введите логин"
-          required
-          autoComplete="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <InputGroupAddon>
-          <User />
-        </InputGroupAddon>
-        {username && (
-          <InputGroupAddon align={'inline-end'}>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setUsername('')}
-              aria-label="Clear username"
-              className={'hover:bg-transparent'}
-            >
-              <X />
-            </Button>
-          </InputGroupAddon>
-        )}
-      </InputGroup>
-    </Field>
-  )
-}
-
-function PasswordInput() {
-  const [showPassword, setShowPassword] = useState(false)
-
-  return (
-    <Field>
-      <div className="flex items-center">
-        <FieldLabel htmlFor="password">Пароль</FieldLabel>
-        <Link
-          to="#"
-          className="ml-auto text-sm underline-offset-4 hover:underline"
-        >
-          Забыли пароль?
-        </Link>
-      </div>
-      <InputGroup>
-        <InputGroupInput
-          id="password"
-          type={showPassword ? 'text' : 'password'}
-          required
-          autoComplete="current-password"
-        />
-        <InputGroupAddon>
-          <Lock />
-        </InputGroupAddon>
-        <InputGroupAddon align={'inline-end'}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => setShowPassword((prev) => !prev)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
-            className={'hover:bg-transparent'}
-          >
-            {showPassword ? <EyeOff /> : <Eye />}
-          </Button>
-        </InputGroupAddon>
-      </InputGroup>
-    </Field>
   )
 }
