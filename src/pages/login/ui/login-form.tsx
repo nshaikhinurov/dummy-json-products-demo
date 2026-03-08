@@ -1,7 +1,10 @@
 import { useForm } from '@tanstack/react-form'
+import { useMutation } from '@tanstack/react-query'
 import { AudioLines, Eye, EyeOff, Lock, User, X } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '~/app/auth-provider'
+import { AuthApiError, loginUser } from '~/shared/api/auth'
 import { Button } from '~/shared/ui/button'
 import { Card, CardContent, CardHeader } from '~/shared/ui/card'
 import { Checkbox } from '~/shared/ui/checkbox'
@@ -21,6 +24,13 @@ import {
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const navigate = useNavigate()
+  const { login } = useAuth()
+
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+  })
 
   const form = useForm({
     defaultValues: {
@@ -28,8 +38,25 @@ export function LoginForm() {
       password: '',
       rememberMe: false,
     },
-    onSubmit: async () => {
-      // Intentionally left blank until API integration is added.
+    onSubmit: async ({ value }) => {
+      setSubmitError(null)
+
+      try {
+        const response = await loginMutation.mutateAsync({
+          username: value.username.trim(),
+          password: value.password,
+        })
+
+        login(response, value.rememberMe)
+        void navigate('/products', { replace: true })
+      } catch (error) {
+        if (error instanceof AuthApiError) {
+          setSubmitError(error.message)
+          return
+        }
+
+        setSubmitError('Не удалось войти. Попробуйте еще раз.')
+      }
     },
   })
 
@@ -216,6 +243,9 @@ export function LoginForm() {
                   </Button>
                 )}
               </form.Subscribe>
+              {submitError ? (
+                <FieldError errors={[{ message: submitError }]} />
+              ) : null}
             </Field>
             <FieldSeparator>Или продолжить с</FieldSeparator>
             <Field>
