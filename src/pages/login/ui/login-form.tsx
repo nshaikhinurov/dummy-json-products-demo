@@ -247,7 +247,9 @@ export function LoginForm() {
                 <FieldError errors={[{ message: submitError }]} />
               ) : null}
             </Field>
-            <FieldSeparator>Или продолжить с</FieldSeparator>
+            <FieldSeparator className='*:data-[slot="field-separator-content"]:bg-card'>
+              Или продолжить с
+            </FieldSeparator>
             <Field>
               <Button variant="outline" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
