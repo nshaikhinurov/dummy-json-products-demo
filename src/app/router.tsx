@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { Login } from '~/pages/login'
 import { NotFound } from '~/pages/not-found'
-import { Products } from '~/pages/products'
+import { ProductsPage } from '~/pages/products'
 import { useAuth } from './auth-provider'
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
     path: '/products',
     element: (
       <RequireAuth>
-        <Products />
+        <ProductsPage />
       </RequireAuth>
     ),
   },

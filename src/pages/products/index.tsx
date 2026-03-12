@@ -1,12 +1,11 @@
 import { PageHeader } from './ui/page-header'
+import { ProductsContent } from './ui/products-content'
 
-export const Products = () => {
+export const ProductsPage = () => {
   return (
     <>
       <PageHeader />
-      <div className="p-4">
-        <h1 className="text-2xl font-bold">Products</h1>
-      </div>
+      <ProductsContent />
     </>
   )
 }
