@@ -203,8 +203,13 @@ export function ProductsTable({
           />
         ),
         cell: ({ row }) => (
-          <span className="tabular-nums">
-            {Number(row.original.rating).toFixed(2)}
+          <span
+            className={cn(
+              'tabular-nums',
+              row.original.rating < 3 && 'text-destructive'
+            )}
+          >
+            {row.original.rating.toFixed(2)}
           </span>
         ),
         meta: {
