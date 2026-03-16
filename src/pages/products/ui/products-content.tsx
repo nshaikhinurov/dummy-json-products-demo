@@ -90,7 +90,7 @@ export const ProductsContent = () => {
         skip: (page - 1) * PAGE_SIZE,
         sortBy: sortingParams.sortBy,
         order: sortingParams.order,
-        select: ['id', 'title', 'brand', 'sku', 'rating', 'price'],
+        select: ['id', 'title', 'category', 'brand', 'sku', 'rating', 'price'],
       }
 
       if (debouncedSearch) {

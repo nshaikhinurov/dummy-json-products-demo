@@ -48,6 +48,32 @@ interface ProductsTableProps {
   onSortingChange: (updater: Updater<SortingState>) => void
 }
 
+const PRICE_FORMATTER = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
+
+function getPriceDisplayParts(value: number) {
+  const parts = PRICE_FORMATTER.formatToParts(value)
+
+  const major = parts
+    .filter(
+      (part) =>
+        part.type === 'currency' ||
+        part.type === 'minusSign' ||
+        part.type === 'integer' ||
+        part.type === 'group'
+    )
+    .map((part) => (part.type === 'group' ? ' ' : part.value))
+    .join('')
+
+  const fraction = parts.find((part) => part.type === 'fraction')?.value ?? '00'
+
+  return { major, fraction }
+}
+
 function getPaginationModel(currentPage: number, totalPages: number) {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, index) => index + 1)
@@ -162,6 +188,14 @@ export function ProductsTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
         ),
+        cell: ({ row }) => (
+          <div className="flex flex-col">
+            <span className="font-bold">{row.original.title}</span>
+            <span className="text-sm text-muted-foreground capitalize">
+              {row.original.category}
+            </span>
+          </div>
+        ),
       },
       {
         accessorKey: 'brand',
@@ -172,7 +206,11 @@ export function ProductsTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
         ),
-        cell: ({ row }) => row.original.brand ?? '—',
+        cell: ({ row }) => (
+          <span className={cn(!row.original.brand && 'text-muted-foreground')}>
+            {row.original.brand ?? 'No name'}
+          </span>
+        ),
         meta: {
           className: 'w-70',
         },
@@ -225,14 +263,16 @@ export function ProductsTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
         ),
-        cell: ({ row }) => (
-          <span className="tabular-nums">
-            {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-            }).format(row.original.price)}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const { major, fraction } = getPriceDisplayParts(row.original.price)
+
+          return (
+            <span className="whitespace-nowrap tabular-nums">
+              <span>{major}</span>
+              <span className="text-muted-foreground">.{fraction}</span>
+            </span>
+          )
+        },
         meta: {
           className: 'text-right w-40',
         },
@@ -243,7 +283,7 @@ export function ProductsTable({
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={<Button variant="ghost" size="icon" />}
+              render={<Button variant="outline" size="icon-sm" />}
               aria-label={`Open actions for ${row.original.title}`}
             >
               <MoreHorizontal className="size-4" />
@@ -315,17 +355,27 @@ export function ProductsTable({
               Array.from({ length: pageSize }, (_, index) => (
                 <TableRow key={`skeleton-${index}`}>
                   {visibleColumns.map((column) => {
-                    const isSelectOrActions =
-                      column.id === 'select' || column.id === 'actions'
-
                     return (
                       <TableCell key={`skeleton-${index}-${column.id}`}>
-                        <div className="flex h-8.5 w-full items-center overflow-hidden">
-                          <Skeleton
-                            className={cn('h-5 w-full', {
-                              'invisible w-5': isSelectOrActions,
-                            })}
-                          />
+                        <div className="flex w-full flex-col items-start justify-center gap-1 overflow-hidden">
+                          {column.id === 'title' ? (
+                            <>
+                              <Skeleton className={'h-5 w-1/4'} />
+                              <Skeleton className={'h-4 w-2/4'} />
+                            </>
+                          ) : (
+                            <Skeleton
+                              className={cn('h-5 w-full', {
+                                invisible:
+                                  column.id === 'select' ||
+                                  column.id === 'actions',
+                                'w-4/5': column.id === 'brand',
+                                'w-29': column.id === 'sku',
+                                'w-10 self-end': column.id === 'rating',
+                                'w-6/10 self-end': column.id === 'price',
+                              })}
+                            />
+                          )}
                         </div>
                       </TableCell>
                     )
