@@ -108,7 +108,7 @@ export const ProductsContent = () => {
   const isPending = productsQuery.isPending
 
   return (
-    <div className="space-y-4 p-4 px-6">
+    <div className="space-y-4 px-6 py-4">
       <h1 className="text-2xl font-bold">Products</h1>
 
       <SearchInputGroup

@@ -1,7 +1,12 @@
-import { LogOut, UserCircle } from 'lucide-react'
+import { ChevronsUpDown, LogOut, UserCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/app/auth-provider'
-import { Avatar, AvatarFallback, AvatarImage } from '~/shared/ui/avatar'
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from '~/shared/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,32 +26,33 @@ export const UserNav = () => {
     void navigate('/login', { replace: true })
   }
 
-  const userInfoBlock = (
-    <div className="flex items-center gap-2">
-      <Avatar className="h-8 w-8 rounded-lg grayscale">
-        <AvatarImage src={session?.image} alt={session?.username} />
-        <AvatarFallback className="rounded-lg">
-          {session?.firstName?.[0]}
-          {session?.lastName?.[0]}
-        </AvatarFallback>
-      </Avatar>
-      <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate font-medium">
-          {session?.firstName} {session?.lastName}
-        </span>
-        <span className="truncate text-xs text-muted-foreground">
-          {session?.username}
-        </span>
-      </div>
-    </div>
-  )
-
   return (
     <div className="flex gap-4">
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center rounded-lg focus:outline-none">
-          {userInfoBlock}
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          className="flex items-center rounded-lg focus:outline-none"
+          render={
+            <div className="flex items-center gap-2 rounded-md p-2 hover:bg-secondary">
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={session?.image} alt={session?.username} />
+                <AvatarFallback className="rounded-lg">
+                  {session?.firstName?.[0]}
+                  {session?.lastName?.[0]}
+                </AvatarFallback>
+                <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">
+                  {session?.username}
+                </span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {session?.firstName} {session?.lastName}
+                </span>
+              </div>
+              <ChevronsUpDown className="size-5" />
+            </div>
+          }
+        ></DropdownMenuTrigger>
         <DropdownMenuContent
           className="min-w-56 rounded-lg"
           align="end"
@@ -54,7 +60,23 @@ export const UserNav = () => {
         >
           <DropdownMenuGroup>
             <DropdownMenuLabel className="p-0 px-1 py-1.5 font-normal">
-              {userInfoBlock}
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={session?.image} alt={session?.username} />
+                  <AvatarFallback className="rounded-lg">
+                    {session?.firstName?.[0]}
+                    {session?.lastName?.[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium text-foreground">
+                    {session?.username}
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {session?.firstName} {session?.lastName}
+                  </span>
+                </div>
+              </div>
             </DropdownMenuLabel>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
