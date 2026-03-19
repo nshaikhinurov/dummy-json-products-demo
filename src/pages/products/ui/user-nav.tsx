@@ -1,4 +1,5 @@
 import { ChevronsUpDown, LogOut, UserCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '~/app/auth-provider'
 import {
@@ -18,6 +19,7 @@ import {
 } from '~/shared/ui/dropdown-menu'
 
 export const UserNav = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { session, logout } = useAuth()
 
@@ -83,13 +85,13 @@ export const UserNav = () => {
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <UserCircle />
-              Аккаунт
+              {t('common.account')}
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut />
-            Выйти
+            {t('common.logout')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

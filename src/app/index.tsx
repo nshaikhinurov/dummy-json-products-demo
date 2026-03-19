@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client'
 
+import '~/shared/i18n'
 import App from './app'
 import './index.css'
 

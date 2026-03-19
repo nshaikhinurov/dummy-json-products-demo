@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { SortingState } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getProducts, searchProducts } from '~/shared/api/products'
 import { useDebouncedValue } from '~/shared/lib/use-debounced-value'
 import {
@@ -49,6 +50,7 @@ function getInitialSorting(): SortingState {
 }
 
 export const ProductsContent = () => {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [searchValue, setSearchValue] = useState('')
   const debouncedSearch = useDebouncedValue(searchValue, SEARCH_DEBOUNCE_MS)
@@ -109,7 +111,7 @@ export const ProductsContent = () => {
 
   return (
     <div className="space-y-4 px-6 py-4">
-      <h1 className="text-2xl font-bold">Products</h1>
+      <h1 className="text-2xl font-bold">{t('products.pageTitle')}</h1>
 
       <SearchInputGroup
         value={searchValue}

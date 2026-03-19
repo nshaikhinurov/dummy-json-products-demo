@@ -1,4 +1,5 @@
 import { Search, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   InputGroup,
   InputGroupAddon,
@@ -15,10 +16,12 @@ export const SearchInputGroup = ({
   value,
   onChange,
 }: SearchInputGroupProps) => {
+  const { t } = useTranslation()
+
   return (
     <InputGroup className="max-w-md">
       <InputGroupInput
-        placeholder="Search products..."
+        placeholder={t('products.searchPlaceholder')}
         value={value}
         onChange={(event) => {
           onChange(event.target.value)

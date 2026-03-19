@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { Product } from '~/shared/api/products'
 import { cn } from '~/shared/lib/utils'
 import { Button } from '~/shared/ui/button'
@@ -145,6 +146,7 @@ export function ProductsTable({
   onPageChange,
   onSortingChange,
 }: ProductsTableProps) {
+  const { t } = useTranslation()
   const [rowSelection, setRowSelection] = useState({})
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
@@ -183,7 +185,7 @@ export function ProductsTable({
         accessorKey: 'title',
         header: ({ column }) => (
           <SortButton
-            label="Title"
+            label={t('products.columnTitle')}
             isSorted={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
@@ -201,14 +203,14 @@ export function ProductsTable({
         accessorKey: 'brand',
         header: ({ column }) => (
           <SortButton
-            label="Brand"
+            label={t('products.columnBrand')}
             isSorted={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
         ),
         cell: ({ row }) => (
           <span className={cn(!row.original.brand && 'text-muted-foreground')}>
-            {row.original.brand ?? 'No name'}
+            {row.original.brand ?? t('products.brandNoName')}
           </span>
         ),
         meta: {
@@ -219,13 +221,15 @@ export function ProductsTable({
         accessorKey: 'sku',
         header: ({ column }) => (
           <SortButton
-            label="SKU"
+            label={t('products.columnSku')}
             isSorted={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
         ),
         cell: ({ row }) => (
-          <span className="font-mono">{row.original.sku ?? '—'}</span>
+          <span className="font-mono">
+            {row.original.sku ?? t('products.skuPlaceholder')}
+          </span>
         ),
         meta: {
           className: 'w-70',
@@ -235,7 +239,7 @@ export function ProductsTable({
         accessorKey: 'rating',
         header: ({ column }) => (
           <SortButton
-            label="Rating"
+            label={t('products.columnRating')}
             isSorted={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
@@ -258,7 +262,7 @@ export function ProductsTable({
         accessorKey: 'price',
         header: ({ column }) => (
           <SortButton
-            label="Price"
+            label={t('products.columnPrice')}
             isSorted={column.getIsSorted()}
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           />
@@ -289,8 +293,10 @@ export function ProductsTable({
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+              <DropdownMenuItem>{t('products.actionEdit')}</DropdownMenuItem>
+              <DropdownMenuItem variant="destructive">
+                {t('products.actionDelete')}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
@@ -299,7 +305,7 @@ export function ProductsTable({
         },
       },
     ],
-    []
+    [t]
   )
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -407,7 +413,7 @@ export function ProductsTable({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No products found.
+                  {t('products.emptyState')}
                 </TableCell>
               </TableRow>
             )}
@@ -417,8 +423,10 @@ export function ProductsTable({
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
-          {table.getSelectedRowModel().rows.length} of{' '}
-          {table.getRowModel().rows.length} row(s) selected.
+          {t('products.rowsSelected', {
+            selected: table.getSelectedRowModel().rows.length,
+            total: table.getRowModel().rows.length,
+          })}
         </p>
 
         <Pagination className="mx-0 w-auto justify-start sm:justify-end">
@@ -426,6 +434,7 @@ export function ProductsTable({
             <PaginationItem>
               <PaginationPrevious
                 href="#"
+                text={t('common.previous')}
                 onClick={(event) => {
                   event.preventDefault()
 
@@ -464,6 +473,7 @@ export function ProductsTable({
             <PaginationItem>
               <PaginationNext
                 href="#"
+                text={t('common.next')}
                 onClick={(event) => {
                   event.preventDefault()
 

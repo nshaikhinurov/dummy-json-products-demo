@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
 import { AudioLines, Eye, EyeOff, Lock, User, X } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '~/app/auth-provider'
 import { AuthApiError, loginUser } from '~/shared/api/auth'
@@ -23,6 +24,7 @@ import {
 } from '~/shared/ui/input-group'
 
 export function LoginForm() {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -55,7 +57,7 @@ export function LoginForm() {
           return
         }
 
-        setSubmitError('Не удалось войти. Попробуйте еще раз.')
+        setSubmitError(t('auth.submitFallbackError'))
       }
     },
   })
@@ -79,9 +81,9 @@ export function LoginForm() {
         >
           <FieldGroup>
             <div className="flex flex-col items-center gap-1 text-center">
-              <h1 className="text-2xl font-bold">Добро пожаловать!</h1>
+              <h1 className="text-2xl font-bold">{t('auth.welcomeTitle')}</h1>
               <p className="text-sm text-balance text-muted-foreground">
-                Пожалуйста, авторизуйтесь
+                {t('auth.welcomeSubtitle')}
               </p>
             </div>
 
@@ -89,7 +91,9 @@ export function LoginForm() {
               name="username"
               validators={{
                 onChange: ({ value }) =>
-                  value.trim().length > 0 ? undefined : 'Введите логин',
+                  value.trim().length > 0
+                    ? undefined
+                    : t('auth.usernameRequired'),
               }}
             >
               {(field) => {
@@ -98,12 +102,14 @@ export function LoginForm() {
 
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Логин</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      {t('auth.usernameLabel')}
+                    </FieldLabel>
                     <InputGroup>
                       <InputGroupInput
                         id={field.name}
                         name={field.name}
-                        placeholder="Введите логин"
+                        placeholder={t('auth.usernamePlaceholder')}
                         autoComplete="username"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -151,7 +157,7 @@ export function LoginForm() {
               validators={{
                 onChange: ({ value }) => {
                   if (!value.trim()) {
-                    return 'Введите пароль'
+                    return t('auth.passwordRequired')
                   }
 
                   return undefined
@@ -165,12 +171,14 @@ export function LoginForm() {
                 return (
                   <Field data-invalid={isInvalid}>
                     <div className="flex items-center">
-                      <FieldLabel htmlFor={field.name}>Пароль</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {t('auth.passwordLabel')}
+                      </FieldLabel>
                       <Link
                         to="#"
                         className="ml-auto text-sm text-foreground underline-offset-4 hover:underline"
                       >
-                        Забыли пароль?
+                        {t('auth.forgotPasswordLink')}
                       </Link>
                     </div>
 
@@ -179,7 +187,7 @@ export function LoginForm() {
                         id={field.name}
                         name={field.name}
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Введите пароль"
+                        placeholder={t('auth.passwordPlaceholder')}
                         autoComplete="current-password"
                         value={field.state.value}
                         onBlur={field.handleBlur}
@@ -228,7 +236,9 @@ export function LoginForm() {
                     checked={field.state.value}
                     onCheckedChange={(checked) => field.handleChange(checked)}
                   />
-                  <FieldLabel htmlFor={field.name}>Запомнить данные</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    {t('auth.rememberMeLabel')}
+                  </FieldLabel>
                 </Field>
               )}
             </form.Field>
@@ -239,7 +249,9 @@ export function LoginForm() {
               >
                 {([canSubmit, isSubmitting]) => (
                   <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                    {isSubmitting ? 'Входим...' : 'Войти'}
+                    {isSubmitting
+                      ? t('auth.loginLoading')
+                      : t('auth.loginButton')}
                   </Button>
                 )}
               </form.Subscribe>
@@ -248,7 +260,7 @@ export function LoginForm() {
               ) : null}
             </Field>
             <FieldSeparator className='*:data-[slot="field-separator-content"]:bg-card'>
-              Или продолжить с
+              {t('auth.continueWithDivider')}
             </FieldSeparator>
             <Field>
               <Button variant="outline" type="button">
@@ -258,12 +270,12 @@ export function LoginForm() {
                     fill="currentColor"
                   />
                 </svg>
-                Войти с GitHub
+                {t('auth.githubLoginButton')}
               </Button>
               <FieldDescription className="text-center">
-                Нет аккаунта?{' '}
+                {t('auth.signupQuestion')}{' '}
                 <Link to="#" className="underline underline-offset-4">
-                  Создать
+                  {t('auth.signupLink')}
                 </Link>
               </FieldDescription>
             </Field>

@@ -1,3 +1,5 @@
+import { i18n } from '~/shared/i18n'
+
 export type ProductSortBy = 'title' | 'brand' | 'sku' | 'rating' | 'price'
 
 export interface Product {
@@ -108,17 +110,14 @@ async function fetchProducts(
       typeof json === 'object' && json !== null && 'message' in json
         ? String(
             (json as { message?: string }).message ??
-              'Не удалось загрузить продукты'
+              i18n.t('errors.productsLoadFailed')
           )
-        : 'Не удалось загрузить продукты'
+        : i18n.t('errors.productsLoadFailed')
 
     throw new ProductsApiError(message)
   }
 
-  return parseProductsResponse(
-    json,
-    'Сервер вернул некорректный список продуктов'
-  )
+  return parseProductsResponse(json, i18n.t('errors.productsInvalidList'))
 }
 
 export async function getProducts(
