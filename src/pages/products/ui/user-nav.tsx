@@ -43,7 +43,7 @@ export const UserNav = () => {
                 </AvatarFallback>
                 <AvatarBadge className="bg-green-600 dark:bg-green-800" />
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="hidden flex-1 text-left text-sm leading-tight sm:grid">
                 <span className="truncate font-medium">
                   {session?.username}
                 </span>
@@ -51,7 +51,7 @@ export const UserNav = () => {
                   {session?.firstName} {session?.lastName}
                 </span>
               </div>
-              <ChevronsUpDown className="size-5" />
+              <ChevronsUpDown className="hidden size-5 sm:block" />
             </div>
           }
         ></DropdownMenuTrigger>
