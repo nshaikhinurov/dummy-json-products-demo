@@ -19,6 +19,14 @@ export interface ProductsListResponse {
   limit: number
 }
 
+export interface CreateProductPayload {
+  title: string
+  price: number
+  brand: string
+  sku: string
+  category: string
+}
+
 interface ProductsRequestParams {
   limit: number
   skip: number
@@ -40,6 +48,7 @@ export class ProductsApiError extends Error {
 
 const PRODUCTS_ENDPOINT = 'https://dummyjson.com/products'
 const SEARCH_ENDPOINT = 'https://dummyjson.com/products/search'
+const CATEGORY_LIST_ENDPOINT = 'https://dummyjson.com/products/category-list'
 
 function buildProductsUrl(
   endpoint: string,
@@ -130,4 +139,33 @@ export async function searchProducts(
   params: ProductsSearchRequestParams
 ): Promise<ProductsListResponse> {
   return fetchProducts(SEARCH_ENDPOINT, params)
+}
+
+export async function getProductCategories(): Promise<string[]> {
+  const response = await fetch(CATEGORY_LIST_ENDPOINT, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  const json = (await response.json()) as unknown
+
+  if (!response.ok) {
+    const message =
+      typeof json === 'object' && json !== null && 'message' in json
+        ? String(
+            (json as { message?: string }).message ??
+              i18n.t('errors.productsCategoriesLoadFailed')
+          )
+        : i18n.t('errors.productsCategoriesLoadFailed')
+
+    throw new ProductsApiError(message)
+  }
+
+  if (!Array.isArray(json) || !json.every((item) => typeof item === 'string')) {
+    throw new ProductsApiError(i18n.t('errors.productsCategoriesInvalidList'))
+  }
+
+  return json
 }
