@@ -190,6 +190,12 @@ export const ProductsContent = () => {
 
   const isPending = productsQuery.isPending
 
+  const [lastKnownTotal, setLastKnownTotal] = useState<number>(1)
+  const currentTotal = productsQuery.data?.total
+  if (currentTotal !== undefined && currentTotal !== lastKnownTotal) {
+    setLastKnownTotal(currentTotal)
+  }
+
   const addProductMutation = useMutation({
     mutationFn: async (payload: CreateProductPayload) => {
       const delay = Math.floor(Math.random() * 2001)
@@ -248,7 +254,7 @@ export const ProductsContent = () => {
         isPending={isPending}
         page={page}
         pageSize={PAGE_SIZE}
-        total={productsQuery.data?.total ?? 0}
+        total={productsQuery.data?.total ?? lastKnownTotal}
         sorting={sorting}
         onPageChange={setPage}
         onSortingChange={(updater) => {

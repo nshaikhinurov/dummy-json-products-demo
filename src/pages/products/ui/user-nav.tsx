@@ -32,7 +32,7 @@ export const UserNav = () => {
     <div className="flex gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex items-center rounded-lg focus:outline-none"
+          nativeButton={false}
           render={
             <div className="flex items-center gap-2 rounded-md p-2 hover:bg-secondary">
               <Avatar className="h-8 w-8 rounded-lg">
@@ -54,7 +54,7 @@ export const UserNav = () => {
               <ChevronsUpDown className="hidden size-5 sm:block" />
             </div>
           }
-        ></DropdownMenuTrigger>
+        />
         <DropdownMenuContent
           className="min-w-56 rounded-lg"
           align="end"

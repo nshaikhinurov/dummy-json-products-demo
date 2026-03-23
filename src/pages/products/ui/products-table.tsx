@@ -422,7 +422,12 @@ export function ProductsTable({
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p
+          className={cn(
+            'text-sm text-muted-foreground',
+            isPending && 'invisible'
+          )}
+        >
           {t('products.rowsSelected', {
             selected: table.getSelectedRowModel().rows.length,
             total: table.getRowModel().rows.length,
