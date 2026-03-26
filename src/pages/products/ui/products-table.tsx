@@ -6,7 +6,14 @@ import {
   type SortingState,
   type Updater,
 } from '@tanstack/react-table'
-import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  MoreHorizontal,
+  Pencil,
+  Trash,
+} from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Product } from '~/shared/api/products'
@@ -287,14 +294,18 @@ export function ProductsTable({
         cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={<Button variant="outline" size="icon-sm" />}
+              render={<Button variant="ghost" size="icon-sm" />}
               aria-label={`Open actions for ${row.original.title}`}
             >
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36">
-              <DropdownMenuItem>{t('products.actionEdit')}</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Pencil className="size-4" />
+                {t('products.actionEdit')}
+              </DropdownMenuItem>
               <DropdownMenuItem variant="destructive">
+                <Trash className="size-4" />
                 {t('products.actionDelete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
