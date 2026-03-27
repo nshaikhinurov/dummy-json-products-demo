@@ -4,6 +4,10 @@ A portfolio pet project that demonstrates a production-style React dashboard on 
 
 The app simulates a small internal product management tool with authentication, protected routes, localized UI, theme switching, and a data-heavy table flow.
 
+## Live Demo
+
+Try the deployed app here: https://dummy-json-products-demo.vercel.app
+
 ## Why This Project
 
 This project was built to showcase practical frontend engineering skills beyond static UI:
@@ -125,4 +129,3 @@ pnpm format
 - Better role-based auth and token refresh strategy
 - E2E testing coverage with Playwright
 - CI pipeline with lint, typecheck, and build gates
-- Deployment with public demo URL
