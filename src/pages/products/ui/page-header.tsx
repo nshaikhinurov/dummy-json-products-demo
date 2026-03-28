@@ -1,7 +1,7 @@
-import { DarkModeToggle } from './dark-mode-toggle'
-import { LanguageToggle } from './language-toggle'
+import { DarkModeToggle } from '~/features/dark-mode-toggle'
+import { LanguageToggle } from '~/features/language-toggle'
+import { UserNav } from '~/features/user-nav'
 import { Logo } from './logo'
-import { UserNav } from './user-nav'
 
 export const PageHeader = () => {
   return (

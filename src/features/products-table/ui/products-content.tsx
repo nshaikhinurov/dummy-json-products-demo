@@ -19,7 +19,7 @@ import {
   PRODUCTS_SORTING_STORAGE_KEY,
   SEARCH_DEBOUNCE_MS,
 } from '../consts'
-import { mapSortingToApi } from '../lib'
+import { mapSortingToApi } from '../model/map-sorting-to-api'
 import { AddProductDialog } from './add-product-dialog'
 import { ProductsTable } from './products-table'
 import { SearchInputGroup } from './search-input-group'

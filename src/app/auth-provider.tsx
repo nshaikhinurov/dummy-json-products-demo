@@ -6,6 +6,7 @@ import {
   useState,
   type PropsWithChildren,
 } from 'react'
+import { mapLoginResponseToSession } from '~/shared/auth/mappers'
 import {
   clearAuthSession,
   loadAuthSession,
@@ -29,15 +30,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   )
 
   const login = useCallback((response: LoginResponse, rememberMe: boolean) => {
-    const nextSession: AuthSession = {
-      accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-      userId: response.id,
-      username: response.username,
-      firstName: response.firstName,
-      lastName: response.lastName,
-      image: response.image,
-    }
+    const nextSession = mapLoginResponseToSession(response)
 
     saveAuthSession(nextSession, rememberMe ? 'local' : 'session')
     setSession(nextSession)

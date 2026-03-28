@@ -2,30 +2,14 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  type ColumnDef,
   type SortingState,
   type Updater,
 } from '@tanstack/react-table'
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  MoreHorizontal,
-  Pencil,
-  Trash,
-} from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { getPaginationModel } from '~/features/products-table/model/pagination'
 import type { Product } from '~/shared/api/products'
 import { cn } from '~/shared/lib/utils'
-import { Button } from '~/shared/ui/button'
-import { Checkbox } from '~/shared/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '~/shared/ui/dropdown-menu'
 import {
   Pagination,
   PaginationContent,
@@ -44,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/shared/ui/table'
+import { useProductsTableColumns } from './products-table-columns'
 
 interface ProductsTableProps {
   products: Product[]
@@ -54,93 +39,6 @@ interface ProductsTableProps {
   sorting: SortingState
   onPageChange: (page: number) => void
   onSortingChange: (updater: Updater<SortingState>) => void
-}
-
-const PRICE_FORMATTER = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})
-
-function getPriceDisplayParts(value: number) {
-  const parts = PRICE_FORMATTER.formatToParts(value)
-
-  const major = parts
-    .filter(
-      (part) =>
-        part.type === 'currency' ||
-        part.type === 'minusSign' ||
-        part.type === 'integer' ||
-        part.type === 'group'
-    )
-    .map((part) => (part.type === 'group' ? ' ' : part.value))
-    .join('')
-
-  const fraction = parts.find((part) => part.type === 'fraction')?.value ?? '00'
-
-  return { major, fraction }
-}
-
-function getPaginationModel(currentPage: number, totalPages: number) {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, index) => index + 1)
-  }
-
-  if (currentPage <= 3) {
-    return [1, 2, 3, 4, 5, 'ellipsis', totalPages] as const
-  }
-
-  if (currentPage >= totalPages - 2) {
-    return [
-      1,
-      'ellipsis',
-      totalPages - 4,
-      totalPages - 3,
-      totalPages - 2,
-      totalPages - 1,
-      totalPages,
-    ] as const
-  }
-
-  return [
-    1,
-    'ellipsis',
-    currentPage - 1,
-    currentPage,
-    currentPage + 1,
-    'ellipsis',
-    totalPages,
-  ] as const
-}
-
-function SortButton({
-  label,
-  isSorted,
-  onClick,
-}: {
-  label: string
-  isSorted: false | 'asc' | 'desc'
-  onClick: () => void
-}) {
-  return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="gap-2 border-none px-0 hover:bg-transparent dark:hover:bg-transparent"
-      onClick={onClick}
-      type="button"
-    >
-      {label}
-      {isSorted === 'asc' ? (
-        <ArrowUp className="size-4 text-muted-foreground group-hover/button:text-foreground" />
-      ) : isSorted === 'desc' ? (
-        <ArrowDown className="size-4 text-muted-foreground group-hover/button:text-foreground" />
-      ) : (
-        <ArrowUpDown className="size-4 text-muted-foreground group-hover/button:text-foreground" />
-      )}
-    </Button>
-  )
 }
 
 export function ProductsTable({
@@ -158,166 +56,7 @@ export function ProductsTable({
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
-  const columns = useMemo<ColumnDef<Product>[]>(
-    () => [
-      {
-        id: 'select',
-        enableSorting: false,
-        header: ({ table }) => (
-          <div className="flex h-full items-center justify-center">
-            <Checkbox
-              aria-label="Select all"
-              checked={table.getIsAllPageRowsSelected()}
-              indeterminate={table.getIsSomePageRowsSelected()}
-              onCheckedChange={(value) =>
-                table.toggleAllPageRowsSelected(Boolean(value))
-              }
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex h-full items-center justify-center">
-            <Checkbox
-              aria-label={`Select row ${row.original.id}`}
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(Boolean(value))}
-            />
-          </div>
-        ),
-        meta: {
-          className: 'w-8 text-center',
-        },
-      },
-      {
-        accessorKey: 'title',
-        header: ({ column }) => (
-          <SortButton
-            label={t('products.columnTitle')}
-            isSorted={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
-        ),
-        cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="font-bold">{row.original.title}</span>
-            <span className="text-sm text-muted-foreground capitalize">
-              {row.original.category}
-            </span>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'brand',
-        header: ({ column }) => (
-          <SortButton
-            label={t('products.columnBrand')}
-            isSorted={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
-        ),
-        cell: ({ row }) => (
-          <span className={cn(!row.original.brand && 'text-muted-foreground')}>
-            {row.original.brand ?? t('products.brandNoName')}
-          </span>
-        ),
-        meta: {
-          className: 'w-70',
-        },
-      },
-      {
-        accessorKey: 'sku',
-        header: ({ column }) => (
-          <SortButton
-            label={t('products.columnSku')}
-            isSorted={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
-        ),
-        cell: ({ row }) => (
-          <span className="font-mono">
-            {row.original.sku ?? t('products.skuPlaceholder')}
-          </span>
-        ),
-        meta: {
-          className: 'w-70',
-        },
-      },
-      {
-        accessorKey: 'rating',
-        header: ({ column }) => (
-          <SortButton
-            label={t('products.columnRating')}
-            isSorted={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
-        ),
-        cell: ({ row }) => (
-          <span
-            className={cn(
-              'tabular-nums',
-              row.original.rating < 3 && 'text-destructive'
-            )}
-          >
-            {row.original.rating.toFixed(2)}
-          </span>
-        ),
-        meta: {
-          className: 'text-right w-25',
-        },
-      },
-      {
-        accessorKey: 'price',
-        header: ({ column }) => (
-          <SortButton
-            label={t('products.columnPrice')}
-            isSorted={column.getIsSorted()}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          />
-        ),
-        cell: ({ row }) => {
-          const { major, fraction } = getPriceDisplayParts(row.original.price)
-
-          return (
-            <span className="whitespace-nowrap tabular-nums">
-              <span>{major}</span>
-              <span className="text-muted-foreground">.{fraction}</span>
-            </span>
-          )
-        },
-        meta: {
-          className: 'text-right w-40',
-        },
-      },
-      {
-        id: 'actions',
-        enableSorting: false,
-        cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={<Button variant="ghost" size="icon-sm" />}
-              aria-label={`Open actions for ${row.original.title}`}
-            >
-              <MoreHorizontal className="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-36">
-              <DropdownMenuItem>
-                <Pencil className="size-4" />
-                {t('products.actionEdit')}
-              </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">
-                <Trash className="size-4" />
-                {t('products.actionDelete')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-        meta: {
-          className: 'w-18 text-center',
-        },
-      },
-    ],
-    [t]
-  )
+  const columns = useProductsTableColumns()
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

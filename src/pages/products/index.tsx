@@ -1,5 +1,5 @@
+import { ProductsContent } from '~/features/products-table/ui/products-content'
 import { PageHeader } from './ui/page-header'
-import { ProductsContent } from './ui/products-content'
 
 export const ProductsPage = () => {
   return (
