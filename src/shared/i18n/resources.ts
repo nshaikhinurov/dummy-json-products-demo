@@ -59,7 +59,9 @@ export const resources: Resource = {
         skuPlaceholder: '-',
         actionEdit: 'Edit',
         actionDelete: 'Delete',
-        emptyState: 'No products found.',
+        emptyStateTitle: 'No products found',
+        emptyStateDescription:
+          'Your search did not match any products. Please try again with different keywords.',
         rowsSelected: '{{selected}} of {{total}} row(s) selected.',
       },
       common: {
@@ -144,7 +146,9 @@ export const resources: Resource = {
         skuPlaceholder: '-',
         actionEdit: 'Изменить',
         actionDelete: 'Удалить',
-        emptyState: 'Товары не найдены.',
+        emptyStateTitle: 'Товары не найдены',
+        emptyStateDescription:
+          'По вашему запросу не найдено ни одного товара. Попробуйте изменить ключевые слова.',
         rowsSelected: 'Выбрано {{selected}} из {{total}} строк.',
       },
       common: {

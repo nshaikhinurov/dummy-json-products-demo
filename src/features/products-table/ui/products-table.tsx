@@ -163,7 +163,23 @@ export function ProductsTable({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {t('products.emptyState')}
+                  <div className="flex flex-col items-center justify-center gap-2 p-10">
+                    <span
+                      className="size-40 bg-muted-foreground/70"
+                      aria-hidden="true"
+                      style={{
+                        mask: "url('/no-products-found.svg') center / contain no-repeat",
+                        WebkitMask:
+                          "url('/no-products-found.svg') center / contain no-repeat",
+                      }}
+                    />
+                    <h2 className="mt-5 text-lg font-semibold">
+                      {t('products.emptyStateTitle')}
+                    </h2>
+                    <p className="max-w-sm text-center text-sm text-pretty wrap-break-word whitespace-normal">
+                      {t('products.emptyStateDescription')}
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
