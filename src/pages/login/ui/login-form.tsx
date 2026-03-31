@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '~/app/auth-provider'
 import { AuthApiError, loginUser } from '~/shared/api/auth'
+import { isFieldInvalid, toFieldErrors } from '~/shared/lib/form-field'
 import { Button } from '~/shared/ui/button'
 import { Card, CardContent, CardHeader } from '~/shared/ui/card'
 import { Checkbox } from '~/shared/ui/checkbox'
@@ -97,8 +98,7 @@ export function LoginForm() {
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -142,9 +142,7 @@ export function LoginForm() {
 
                     {isInvalid && (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     )}
                   </Field>
@@ -165,8 +163,7 @@ export function LoginForm() {
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -217,9 +214,7 @@ export function LoginForm() {
 
                     {isInvalid ? (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     ) : null}
                   </Field>

@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { CreateProductPayload } from '~/shared/api/products'
 import { getProductCategories, ProductsApiError } from '~/shared/api/products'
+import { isFieldInvalid, toFieldErrors } from '~/shared/lib/form-field'
 import { Button } from '~/shared/ui/button'
 import {
   Combobox,
@@ -102,8 +103,7 @@ export function AddProductDialog({
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -125,9 +125,7 @@ export function AddProductDialog({
                     />
                     {isInvalid ? (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     ) : null}
                   </Field>
@@ -153,8 +151,7 @@ export function AddProductDialog({
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -178,9 +175,7 @@ export function AddProductDialog({
                     />
                     {isInvalid ? (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     ) : null}
                   </Field>
@@ -198,8 +193,7 @@ export function AddProductDialog({
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -220,9 +214,7 @@ export function AddProductDialog({
                     />
                     {isInvalid ? (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     ) : null}
                   </Field>
@@ -240,8 +232,7 @@ export function AddProductDialog({
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -262,9 +253,7 @@ export function AddProductDialog({
                     />
                     {isInvalid ? (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     ) : null}
                   </Field>
@@ -282,8 +271,7 @@ export function AddProductDialog({
               }}
             >
               {(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
+                const isInvalid = isFieldInvalid(field.state.meta)
 
                 return (
                   <Field data-invalid={isInvalid}>
@@ -336,9 +324,7 @@ export function AddProductDialog({
 
                     {isInvalid ? (
                       <FieldError
-                        errors={field.state.meta.errors.map((error) => ({
-                          message: error?.toString(),
-                        }))}
+                        errors={toFieldErrors(field.state.meta.errors)}
                       />
                     ) : null}
                   </Field>
